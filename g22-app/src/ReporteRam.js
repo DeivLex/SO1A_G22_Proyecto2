@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Doughnut } from '@reactchartjs/react-chart.js';
+import { Pie } from '@reactchartjs/react-chart.js';
 import axios from "axios";
 
 let totalRam = '';
@@ -9,18 +9,21 @@ const ReporteRam = () => {
   const chart = () => {
     let empSal = [];
     axios
-      .post("http://34.121.110.42/ram")
+      .post("http://35.192.47.92/genero")
       .then(res => {
-        empSal.push(parseInt((res.data.uso/res.data.total)*100));
-        empSal.push(parseInt((res.data.libre/res.data.total)*100));
-        totalRam =  res.data.total;
+        console.log(res.data[0]);
+        res.data.forEach(element => {
+          totalRam =  element[0];
+          empSal.push(element[1]);
+          empSal.push(element[2]);
+        });
         setChartData({
-          labels: ["Uso %","Libre %"],
+          labels: ["Femenino","Maculino"],
           datasets: [
             {
               label: "level of thiccness",
               data: empSal,
-              backgroundColor: ["rgba(75, 192, 192, 0.6)",'rgba(255, 99, 132, 0.2)',
+              backgroundColor: ['rgba(255, 99, 132, 0.2)',"rgba(75, 192, 192, 0.6)",
               'rgba(54, 162, 235, 0.2)','rgba(255, 206, 86, 0.2)',
               'rgba(153, 102, 255, 0.2)','rgba(255, 159, 64, 0.2)'],
               borderColor: [
@@ -46,8 +49,8 @@ const ReporteRam = () => {
   return (
     <div className="App">
       <div>
-        <h2>Total: {totalRam}MB </h2>
-        <Doughnut data={chartData}/>
+        <h2>Pais: {totalRam} </h2>
+        <Pie data={chartData}/>
       </div>
     </div>
   );

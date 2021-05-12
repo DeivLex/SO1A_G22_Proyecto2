@@ -69,7 +69,7 @@ class Vista extends React.Component{
             <hr></hr>
             <div class="card" style={divStyle}>
             <div class="card-body">
-                <h3>Utilización de la RAM (Porcentaje)</h3>
+                <h3>Géneros de los vacunados por país</h3>
                 <ReporteRam />
             </div>
             </div>

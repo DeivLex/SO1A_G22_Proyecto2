@@ -18,19 +18,19 @@ function App() {
         <div className="collapse navbar-collapse" id="navbarCollapse">
           <ul className="navbar-nav mr-auto">
               <li className="nav-item">
-                  <a className="nav-link" href="/vistas">Vista de metricas</a>
+                  <a className="nav-link" href="/reportes">Reportes</a>
               </li>
               <li className="nav-item">
-                  <a className="nav-link" href="/metricas">Monitoreo del server</a>
+                  <a className="nav-link" href="/graficas">Graficas</a>
               </li>
           </ul>
         </div>
       </nav> 
       <Switch>
-          <Route exact path="/vistas">
+          <Route exact path="/reportes">
             <Metrica />
           </Route>
-          <Route exact path="/metricas">
+          <Route exact path="/graficas">
             <Vista />
           </Route>
       </Switch>

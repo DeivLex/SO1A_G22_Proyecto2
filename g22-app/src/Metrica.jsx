@@ -93,10 +93,10 @@ class Metrica extends React.Component{
             body: JSON.stringify({})
         };
         Promise.all([
-            fetch("http://34.121.110.42/find",requestOptions),
-            fetch("http://34.121.110.42/region",requestOptions),
-            fetch("http://34.121.110.42/funnel",requestOptions),
-            fetch("http://34.121.110.42/ultimos",requestOptions)
+            fetch("http://35.192.47.92/find",requestOptions),
+            fetch("http://35.192.47.92/ultimos",requestOptions),
+            fetch("http://35.192.47.92/find",requestOptions),
+            fetch("http://35.192.47.92/find",requestOptions)
           ]).then(allResponses => {
             allResponses[0].json().then(data => this.setState({ Reporte1: data }))
             allResponses[1].json().then(data => this.setState({ Reporte2: data }))
@@ -107,6 +107,8 @@ class Metrica extends React.Component{
 
     render() {
         const { Reporte1,Reporte2,Reporte3,Reporte6,name } = this.state;
+        console.log(Reporte1);
+        console.log(Reporte2);
         var R3Data = [];
         var R3Label = [];
         Reporte3.forEach( Element => R3Label.push(Element[1]));
@@ -128,7 +130,7 @@ class Metrica extends React.Component{
             <div class="card" style={divStyle}>
             <div class="card-body">
             <div class="scrollit" style={tbodyStyle}>
-                <h3>Tabla de datos recopilados
+                <h3>Tabla de datos almacenados
                 <select name="cars"  onClick={this.handleSelectChange} id="cars">
                     <option value="Todos">Todos</option>
                     <option value="NATS">NATS</option>
@@ -143,8 +145,8 @@ class Metrica extends React.Component{
                     <th scope="col">Name</th>
                     <th scope="col">Location</th>
                     <th scope="col">Age</th>
-                    <th scope="col">InfectedType</th>
-                    <th scope="col">State</th>
+                    <th scope="col">VaccineType</th>
+                    <th scope="col">Gender</th>
                     <th scope="col">Path</th>
                     </tr>
                 </thead>
@@ -155,8 +157,8 @@ class Metrica extends React.Component{
                       <th scope="row"> {el.name} </th>
                       <td>{el.location}</td>
                       <td>{el.age}</td>
-                      <td>{el.infectedtype}</td>
-                      <td>{el.state}</td>
+                      <td>{el.vaccine_type}</td>
+                      <td>{el.gender}</td>
                       <td>{el.path}</td>
                       </tr>
                     )
@@ -169,19 +171,31 @@ class Metrica extends React.Component{
             <hr></hr>
             <div class="card" style={divStyle}>
             <div class="card-body">
-                <h3>Región más infectada</h3>
+                <h3>Los últimos cinco vacunados almacenados por país</h3>
                 <table class="table">
                 <thead>
                     <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Nombre</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">VaccineType</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Path</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <th scope="row">{report2[0]}</th>
-                    <td>{report2[1]}</td>
-                    </tr>
+                    {
+                        Reporte2.map(el =>
+                        <tr>
+                        <th scope="row"> {el.name} </th>
+                        <td>{el.location}</td>
+                        <td>{el.age}</td>
+                        <td>{el.vaccine_type}</td>
+                        <td>{el.gender}</td>
+                        <td>{el.path}</td>
+                        </tr>
+                        )
+                    }
                 </tbody>
                 </table>
             </div>
