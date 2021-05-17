@@ -3,19 +3,43 @@ import { Pie } from '@reactchartjs/react-chart.js';
 import axios from "axios";
 
 let totalRam = '';
+let state = {
+  name : "Guatemala"
+};
+let empFilter = [];
 
+axios
+  .post("http://35.192.47.92/genero")
+  .then(res => {
+    console.log(res.data);
+    res.data.forEach(element => {
+      empFilter.push(element[0]);
+    });
+  })
+.catch(err => {
+  console.log(err);
+});
 const ReporteRam = () => {
+
+
+  const handleSelectChange = (event) => {
+    state = {
+      name: event.target.value
+    };
+  }
+
   const [chartData, setChartData] = useState({});
   const chart = () => {
     let empSal = [];
     axios
       .post("http://35.192.47.92/genero")
       .then(res => {
-        console.log(res.data[0]);
         res.data.forEach(element => {
-          totalRam =  element[0];
-          empSal.push(element[1]);
-          empSal.push(element[2]);
+          if (element[0] === state.name){
+            totalRam =  element[0];
+            empSal.push(element[2]);
+            empSal.push(element[1]);
+          }
         });
         setChartData({
           labels: ["Femenino","Maculino"],
@@ -48,6 +72,14 @@ const ReporteRam = () => {
   }, []);
   return (
     <div className="App">
+      <select name="cars" onClick={handleSelectChange} id="cars">
+          <option value="Guatemala">Guatemala</option>
+          {
+            empFilter.map(el =>
+              <option value={el}>{el}</option>
+              )
+          }
+      </select>
       <div>
         <h2>Pais: {totalRam} </h2>
         <Pie data={chartData}/>

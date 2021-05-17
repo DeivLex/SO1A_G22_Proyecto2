@@ -9,6 +9,12 @@ const tbodyStyle =  {
 const divStyle = {
     margin: '2%'
 };
+
+const centerStyle = {
+    'justify-content': 'center',
+    'align-items': 'center',
+    display: 'flex',
+};
 class Metrica extends React.Component{
 
     constructor(props) {
@@ -18,7 +24,7 @@ class Metrica extends React.Component{
           Reporte1: [],
           Reporte2: [],
           Reporte3: [],
-          name : "Todos"
+          name : "Guatemala"
         };
 
         this.config = {
@@ -87,11 +93,11 @@ class Metrica extends React.Component{
         Promise.all([
             fetch("http://35.192.47.92/find",requestOptions),
             fetch("http://35.192.47.92/ultimos",requestOptions),
-            fetch("https://us-central1-pure-advantage-305004.cloudfunctions.net/function-1/")
+            fetch("http://35.192.47.92/find",requestOptions)
           ]).then(allResponses => {
             allResponses[0].json().then(data => this.setState({ Reporte1: data }))
             allResponses[1].json().then(data => this.setState({ Reporte2: data }))
-            allResponses[2].json().then(data => this.setState({ Reporte3: data.datos }))
+            allResponses[2].json().then(data => this.setState({ Reporte3: data }))
           });
     }
 
@@ -129,21 +135,25 @@ class Metrica extends React.Component{
             // a must be equal to b
             return 0;
         });
-        console.log(items);
     return (
         <div>
             <br></br>
             <br></br>
             <br></br>
+            <div style={centerStyle}>
+                <select name="cars"  onClick={this.handleSelectChange} id="cars">
+                    <option value="Guatemala">Guatemala</option>
+                    {
+                        Lugares.map(el =>
+                        <option value={el}>{el}</option>
+                        )
+                    }
+                </select>
+            </div>
             <div class="card" style={divStyle}>
             <div class="card-body">
             <div class="scrollit" style={tbodyStyle}>
                 <h3>Tabla de datos almacenados
-                <select name="cars"  onClick={this.handleSelectChange} id="cars">
-                    <option value="Todos">Todos</option>
-                    <option value="REDIS">REDIS</option>
-                    <option value="GRPC">GRPC</option>
-                </select>
                 </h3>
                 <table class="table">
                 <thead>
@@ -158,7 +168,7 @@ class Metrica extends React.Component{
                 </thead>
                 <tbody>
                   {
-                    Reporte1.filter(number => (number.path === name) || (name === 'Todos') ).map(el =>
+                    Reporte1.map(el =>
                       <tr>
                       <th scope="row"> {el.name} </th>
                       <td>{el.location}</td>
@@ -191,7 +201,7 @@ class Metrica extends React.Component{
                 </thead>
                 <tbody>
                     {
-                        Reporte2.slice(0,5).map(el =>
+                        Reporte2.filter(number => (number.location === name)).map(el =>
                         <tr>
                         <th scope="row"> {el.name} </th>
                         <td>{el.location}</td>
