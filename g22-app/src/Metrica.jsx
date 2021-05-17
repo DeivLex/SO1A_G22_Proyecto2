@@ -1,9 +1,5 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {Chart} from 'chartjs-funnel'
-import Reporte4 from './Reporte4'
-import Reporte5 from './Reporte5'
-import Reporte7 from './Reporte7'
 
 const tbodyStyle =  {
     height: '500px',     
@@ -22,7 +18,6 @@ class Metrica extends React.Component{
           Reporte1: [],
           Reporte2: [],
           Reporte3: [],
-          Reporte6: [],
           name : "Todos"
         };
 
@@ -84,9 +79,6 @@ class Metrica extends React.Component{
       }
 
     componentDidMount() {
-        var ctx = document.getElementById("chart-area").getContext("2d");
-        window.myDoughnut = new Chart(ctx, this.config);
-
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -95,33 +87,49 @@ class Metrica extends React.Component{
         Promise.all([
             fetch("http://35.192.47.92/find",requestOptions),
             fetch("http://35.192.47.92/ultimos",requestOptions),
-            fetch("http://35.192.47.92/find",requestOptions),
-            fetch("http://35.192.47.92/find",requestOptions)
+            fetch("https://us-central1-pure-advantage-305004.cloudfunctions.net/function-1/")
           ]).then(allResponses => {
             allResponses[0].json().then(data => this.setState({ Reporte1: data }))
             allResponses[1].json().then(data => this.setState({ Reporte2: data }))
-            allResponses[2].json().then(data => this.setState({ Reporte3: data }))
-            allResponses[3].json().then(data => this.setState({ Reporte6: data }))
+            allResponses[2].json().then(data => this.setState({ Reporte3: data.datos }))
           });
     }
 
     render() {
-        const { Reporte1,Reporte2,Reporte3,Reporte6,name } = this.state;
-        console.log(Reporte1);
-        console.log(Reporte2);
-        var R3Data = [];
-        var R3Label = [];
-        Reporte3.forEach( Element => R3Label.push(Element[1]));
-        Reporte3.forEach( Element => R3Data.push(parseInt(Element[0])));
-        for (let index = 0; index < 5; index++) {
-            this.config.data.labels.pop();  
-            this.config.data.datasets[0].data.pop();
-        }
-        for (let index = 0; index < 5; index++) {
-            this.config.data.labels.push(R3Label[index]); 
-            this.config.data.datasets[0].data.push(R3Data[index]);
-        }
-        let report2 = String(Reporte2[0]).split(',');
+        const { Reporte1,Reporte2,Reporte3,name } = this.state;
+        const Lugares = [];
+        const LugaresCont = [];
+        var items = [
+        ];
+        Reporte1.forEach(element => {
+            if (!Lugares.includes(element.location)) {
+                Lugares.push(element.location);
+            }
+        });
+        Lugares.forEach(elementL => {
+            let cont = 0;
+            Reporte1.forEach(element => {
+                if(element.location === elementL){
+                    cont += 1;
+                }
+            });
+            items.push({
+                name: elementL,
+                value: cont
+            });
+            LugaresCont.push(cont);
+        });
+        items.sort(function (a, b) {
+            if (a.value < b.value) {
+              return 1;
+            }
+            if (a.value > b.value) {
+              return -1;
+            }
+            // a must be equal to b
+            return 0;
+        });
+        console.log(items);
     return (
         <div>
             <br></br>
@@ -133,10 +141,8 @@ class Metrica extends React.Component{
                 <h3>Tabla de datos almacenados
                 <select name="cars"  onClick={this.handleSelectChange} id="cars">
                     <option value="Todos">Todos</option>
-                    <option value="NATS">NATS</option>
+                    <option value="REDIS">REDIS</option>
                     <option value="GRPC">GRPC</option>
-                    <option value="RabbitMQ">RabbitMQ</option>
-                    <option value="GPS">GPS</option>
                 </select>
                 </h3>
                 <table class="table">
@@ -185,7 +191,7 @@ class Metrica extends React.Component{
                 </thead>
                 <tbody>
                     {
-                        Reporte2.map(el =>
+                        Reporte2.slice(0,5).map(el =>
                         <tr>
                         <th scope="row"> {el.name} </th>
                         <td>{el.location}</td>
@@ -203,54 +209,23 @@ class Metrica extends React.Component{
             <hr></hr>
             <div class="card" style={divStyle}>
             <div class="card-body">
-                <h3>Top 5 departamentos infectados</h3>
-                <div id="canvas-holder">
-                    <canvas id="chart-area"></canvas>
-                </div>
-            </div>
-            </div>
-            <hr></hr>
-            <div class="card" style={divStyle}>
-            <div class="card-body">
-                <h3>Casos infectados por state</h3>
-                <Reporte4/>
-            </div>
-            </div>
-            <hr></hr>
-            <div class="card" style={divStyle}>
-            <div class="card-body">
-                <h3>Casos infectados por infectedType</h3>
-                <Reporte5 />
-            </div>
-            </div>
-            <hr></hr>
-            <div class="card" style={divStyle}>
-            <div class="card-body">
-                <h3>Tabla con los últimos 5 casos registrados</h3>
+                <h3>Los diez países con más vacunados</h3>
                 <table class="table">
                 <thead>
                     <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">Location</th>
-                    <th scope="col">Age</th>
-                    <th scope="col">InfectedType</th>
-                    <th scope="col">State</th>
-                    <th scope="col">Path</th>
+                    <th scope="col">Amount</th>
                     </tr>
                 </thead>
                 <tbody>
-                  {   
-                    Reporte6.map(el => 
-                      <tr>
-                      <th scope="row"> {el.name} </th>
-                      <td>{el.location}</td>
-                      <td>{el.age}</td>
-                      <td>{el.infectedtype}</td>
-                      <td>{el.state}</td>
-                      <td>{el.path}</td>
-                      </tr>
-                    )
-                  }
+                    {
+                        items.slice(0,10).map(el =>
+                            <tr>
+                            <th scope="row"> {el.name} </th>
+                            <td>{el.value}</td>
+                            </tr>
+                        )
+                    }
                 </tbody>
                 </table>
             </div>
@@ -258,8 +233,27 @@ class Metrica extends React.Component{
             <hr></hr>
             <div class="card" style={divStyle}>
             <div class="card-body">
-                <h3>Rango de edad de infectados</h3>
-                <Reporte7/>
+            <div class="scrollit" style={tbodyStyle}>
+                <h3>Personas vacunadas por cada país</h3>
+                <table class="table">
+                <thead>
+                    <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        items.map(el =>
+                            <tr>
+                            <th scope="row"> {el.name} </th>
+                            <td>{el.value}</td>
+                            </tr>
+                        )
+                    }
+                </tbody>
+                </table>
+            </div>
             </div>
             </div>
         </div>
