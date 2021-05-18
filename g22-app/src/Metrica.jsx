@@ -93,28 +93,34 @@ class Metrica extends React.Component{
         Promise.all([
             fetch("http://35.192.47.92/find",requestOptions),
             fetch("http://35.192.47.92/ultimos",requestOptions),
-            fetch("http://35.192.47.92/find",requestOptions)
+            fetch("https://us-central1-pure-advantage-305004.cloudfunctions.net/function-1/")
           ]).then(allResponses => {
             allResponses[0].json().then(data => this.setState({ Reporte1: data }))
             allResponses[1].json().then(data => this.setState({ Reporte2: data }))
-            allResponses[2].json().then(data => this.setState({ Reporte3: data }))
+            allResponses[2].json().then(data => this.setState({ Reporte3: data.datos }))
           });
     }
 
     render() {
         const { Reporte1,Reporte2,Reporte3,name } = this.state;
         const Lugares = [];
+        const Lugares2 = [];
         const LugaresCont = [];
         var items = [
         ];
         Reporte1.forEach(element => {
+            if (!Lugares2.includes(element.location)) {
+                Lugares2.push(element.location);
+            }
+        });
+        Reporte3.forEach(element => {
             if (!Lugares.includes(element.location)) {
                 Lugares.push(element.location);
             }
         });
         Lugares.forEach(elementL => {
             let cont = 0;
-            Reporte1.forEach(element => {
+            Reporte3.forEach(element => {
                 if(element.location === elementL){
                     cont += 1;
                 }
@@ -144,7 +150,7 @@ class Metrica extends React.Component{
                 <select name="cars"  onClick={this.handleSelectChange} id="cars">
                     <option value="Guatemala">Guatemala</option>
                     {
-                        Lugares.map(el =>
+                        Lugares2.map(el =>
                         <option value={el}>{el}</option>
                         )
                     }

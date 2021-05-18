@@ -5,15 +5,23 @@ import axios from "axios";
 
 let empSal = [];
 let empAge = [];
+let Lugares2 = [];
+let state = {
+  name : "Guatemala"
+};
 const ReporteRam2 = () => {
+  const handleSelectChange = (event) => {
+    state = {
+      name: event.target.value
+    };
+  }
   const [chartData, setChartData] = useState({});
   const chart = () => {
     axios
-      .post("http://35.192.47.92/find")
+      .post("https://us-central1-pure-advantage-305004.cloudfunctions.net/function-1/")
       .then(res => {
         empAge = [];
         empSal = [];
-        console.log(res.data);
         let cont = 0;
         let cont1 = 0;
         let cont2 = 0;
@@ -24,27 +32,34 @@ const ReporteRam2 = () => {
         let cont7 = 0;
         let cont8 = 0;
         let cont9 = 0;
-        res.data.forEach(element => {
-          if(element.age > 0 && element.age < 11){
-            cont += 1;
-          }else if(element.age > 10 && element.age < 21){
-            cont1 += 1;
-          }else if(element.age > 20 && element.age < 31){
-            cont2 += 1;
-          }else if(element.age > 30 && element.age < 41){
-            cont3 += 1;
-          }else if(element.age > 40 && element.age < 51){
-            cont4 += 1;
-          }else if(element.age > 50 && element.age < 61){
-            cont5 += 1;
-          }else if(element.age > 60 && element.age < 71){
-            cont6 += 1;
-          }else if(element.age > 70 && element.age < 81){
-            cont7 += 1;
-          }else if(element.age > 80 && element.age < 91){
-            cont8 += 1;
-          }else if(element.age > 90 && element.age < 101){
-            cont9 += 1;
+        res.data.datos.forEach(element => {
+          if (!Lugares2.includes(element.location)) {
+              Lugares2.push(element.location);
+          }
+        });
+        res.data.datos.forEach(element => {
+          if (element.location === state.name){
+            if(element.age > 0 && element.age < 11){
+              cont += 1;
+            }else if(element.age > 10 && element.age < 21){
+              cont1 += 1;
+            }else if(element.age > 20 && element.age < 31){
+              cont2 += 1;
+            }else if(element.age > 30 && element.age < 41){
+              cont3 += 1;
+            }else if(element.age > 40 && element.age < 51){
+              cont4 += 1;
+            }else if(element.age > 50 && element.age < 61){
+              cont5 += 1;
+            }else if(element.age > 60 && element.age < 71){
+              cont6 += 1;
+            }else if(element.age > 70 && element.age < 81){
+              cont7 += 1;
+            }else if(element.age > 80 && element.age < 91){
+              cont8 += 1;
+            }else if(element.age > 90 && element.age < 101){
+              cont9 += 1;
+            }
           }
         });
         empSal.push(cont);
@@ -98,6 +113,14 @@ const ReporteRam2 = () => {
   }, []);
   return (
     <div className="App">
+      <select name="cars"  onClick={handleSelectChange} id="cars">
+            <option value="Guatemala">Guatemala</option>
+            {
+                Lugares2.map(el =>
+                <option value={el}>{el}</option>
+                )
+            }
+        </select>
       <div>
         <Bar data={chartData} options={
           {
@@ -106,7 +129,7 @@ const ReporteRam2 = () => {
                 {
                   ticks: {
                     min: 0,
-                    max: 1000,
+                    max: 100,
                     stepSize: 200
                   },
                 },

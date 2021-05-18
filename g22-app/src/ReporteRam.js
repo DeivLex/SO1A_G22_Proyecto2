@@ -11,7 +11,6 @@ let empFilter = [];
 axios
   .post("http://35.192.47.92/genero")
   .then(res => {
-    console.log(res.data);
     res.data.forEach(element => {
       empFilter.push(element[0]);
     });
